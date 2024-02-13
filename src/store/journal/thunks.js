@@ -9,6 +9,8 @@ import {
   updateNote
 } from "./index";
 import { loadNotes } from "../../helpers/loadNotes";
+import { fileUpload } from "../../helpers/fileUpload";
+
 
 export const startNewNote = () => {
   return async (dispatch, getState) => {
@@ -64,6 +66,8 @@ export const startUploadingFiles = (files = []) => {
   return async (dispatch) => {
 
     dispatch(setSaving())
+
+    await fileUpload( files[0] )
 
     console.log(files)
 
