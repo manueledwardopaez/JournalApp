@@ -1,10 +1,19 @@
-import { SaveOutlined, UploadOutlined } from "@mui/icons-material";
+import {
+  SaveOutlined,
+  UploadOutlined,
+  DeleteOutline,
+} from "@mui/icons-material";
 import { Grid, Typography, Button, TextField, IconButton } from "@mui/material";
 import { ImageGallery } from "../components";
 import { useSelector, useDispatch } from "react-redux";
 import { useForm } from "../../hooks";
 import { useEffect, useMemo, useRef } from "react";
-import { setActiveNote, startSavingNote, startUploadingFiles } from "../../store/journal";
+import {
+  setActiveNote,
+  startSavingNote,
+  startUploadingFiles,
+  startDeletingNote
+} from "../../store/journal";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.css";
 
@@ -23,7 +32,7 @@ export const NoteView = () => {
     return newDate.toUTCString();
   }, [date]);
 
-  const fileInputRef = useRef()
+  const fileInputRef = useRef();
 
   useEffect(() => {
     dispatch(setActiveNote(formState));
@@ -41,8 +50,12 @@ export const NoteView = () => {
 
   const onFileInputChange = ({ target }) => {
     if (target.files === 0) return;
-    dispatch(startUploadingFiles(target.files))
+    dispatch(startUploadingFiles(target.files));
   };
+
+  const onDelete = () => {
+    dispatch(startDeletingNote())
+  }
 
   return (
     <Grid
@@ -59,8 +72,18 @@ export const NoteView = () => {
         </Typography>
       </Grid>
 
-      <input type="file" multiple onChange={onFileInputChange} ref={fileInputRef}  style={{display: "none"}} />
-      <IconButton color="primary" disabled={isSaving} onClick={ () => fileInputRef.current.click() } >
+      <input
+        type="file"
+        multiple
+        onChange={onFileInputChange}
+        ref={fileInputRef}
+        style={{ display: "none" }}
+      />
+      <IconButton
+        color="primary"
+        disabled={isSaving}
+        onClick={() => fileInputRef.current.click()}
+      >
         <UploadOutlined></UploadOutlined>
       </IconButton>
 
@@ -102,7 +125,14 @@ export const NoteView = () => {
         />
       </Grid>
 
-      <ImageGallery />
+      <Grid container justifyContent="end">
+        <Button onClick={onDelete} sx={{ mt: 2 }} color="error">
+          <DeleteOutline />
+          Borrar
+        </Button>
+      </Grid>
+
+      <ImageGallery images={note.imageUrls} />
     </Grid>
   );
 };
